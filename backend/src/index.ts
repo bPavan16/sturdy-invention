@@ -1,18 +1,15 @@
-import { OutgoingMessage, SupportedMessage as OutgoingSupportedMessages } from "./messages/outgoingMessages";
-import { server as WebSocketServer, connection } from "websocket"
 import http from 'http';
-import { UserManager } from "./UserManager";
+import { server as WebSocketServer, connection } from "websocket"
+import { OutgoingMessage, SupportedMessage as OutgoingSupportedMessages } from "./messages/outgoingMessages";
 import { IncomingMessage, SupportedMessage } from "./messages/incomingMessages";
-
 import { InMemoryStore } from "./store/InMemoryStore";
+import { UserManager } from "./UserManager";
 
 const server = http.createServer(function (request: any, response: any) {
     console.log((new Date()) + ' Received request for ' + request.url);
     response.writeHead(404);
     response.end();
 });
-
-server
 
 const userManager = new UserManager();
 const store = new InMemoryStore();
