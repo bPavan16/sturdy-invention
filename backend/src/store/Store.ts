@@ -1,4 +1,3 @@
-
 export type UserId = string;
 
 export interface Chat {
@@ -6,7 +5,7 @@ export interface Chat {
     userId: UserId;
     name: string;
     message: string;
-    upvotes: UserId[]; // who has upvoted what 
+    upvotes: UserId[]; // who has upvoited what 
 }
 
 export abstract class Store {
