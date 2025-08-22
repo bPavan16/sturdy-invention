@@ -37,7 +37,7 @@ export class UserManager {
     }
 
     removeUser(roomId: string, userId: string) {
-        console.log("removed user");
+        // console.log("removed user");
         const room = this.rooms.get(roomId);
         if (room) {
             room.users = room.users.filter(({ id }) => id !== userId);
@@ -54,19 +54,19 @@ export class UserManager {
     broadcast(roomId: string, userId: string, message: OutgoingMessage) {
         const user = this.getUser(roomId, userId);
         if (!user) {
-            console.error("User not found");
+            // console.error("User not found");
             return;
         }
 
         const room = this.rooms.get(roomId);
         if (!room) {
-            console.error("Rom rom not found");
+            // console.error("Rom rom not found");
             return;
         }
 
         room.users.forEach(({ conn, id }) => {
             // Include the sender in the broadcast so they see their own messages
-            console.log("outgoing message " + JSON.stringify(message))
+            // console.log("outgoing message " + JSON.stringify(message))
             conn.sendUTF(JSON.stringify(message))
         })
     }
@@ -74,7 +74,7 @@ export class UserManager {
     sendUserList(roomId: string) {
         const room = this.rooms.get(roomId);
         if (!room) {
-            console.error("Room not found");
+            // console.error("Room not found");
             return;
         }
 

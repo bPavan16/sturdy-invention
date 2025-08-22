@@ -53,7 +53,7 @@ export const ChatSections = ({ messages, onUpvote, currentUserId }: ChatSections
 
     <ScrollArea className="h-[470px]">
       {messagesList.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+        <div className="flex flex-col items-center justify-center h-[470px] p-2 text-muted-foreground">
           <MessageCircle className="w-8 h-8 mb-3 opacity-40" />
           <p className="text-sm">{emptyMessage}</p>
         </div>
@@ -129,7 +129,7 @@ export const ChatSections = ({ messages, onUpvote, currentUserId }: ChatSections
           </div>
           <ScrollArea className="h-[470px]">
             {topUpvoteMessages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+              <div className="flex flex-col items-center justify-center h-[470px] text-muted-foreground">
                 <Crown className="w-8 h-8 mb-3 opacity-40" />
                 <p className="text-sm">No top messages yet</p>
               </div>
