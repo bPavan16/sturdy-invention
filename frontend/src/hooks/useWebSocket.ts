@@ -11,15 +11,19 @@ interface UseWebSocketReturn {
     disconnect: () => void;
 }
 
-export const useWebSocket = (url: string): UseWebSocketReturn => {
+export const useWebSocket = (url?: string): UseWebSocketReturn => {
+    const defaultUrl = import.meta.env.VITE_WEBSOCKET_URL || 'ws://localhost:8080';
+    const websocketUrl = url || defaultUrl;
     
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [users, setUsers] = useState<Array<{ id: string; name: string }>>([]);
-    const wsRef = useRef<WebSocket | null>(null);    const connect = () => {
+    const wsRef = useRef<WebSocket | null>(null);
+
+    const connect = () => {
         if (wsRef.current?.readyState === WebSocket.OPEN) return;
 
-        const ws = new WebSocket(url, 'echo-protocol');
+        const ws = new WebSocket(websocketUrl, 'echo-protocol');
 
         ws.onopen = () => {
             console.log('WebSocket connected');

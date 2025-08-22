@@ -17,7 +17,7 @@ export const ChatInterface = () => {
         roomId: '',
     });
 
-    const { isConnected, messages, users, sendMessage, connect } = useWebSocket('ws://localhost:8080');
+    const { isConnected, messages, users, sendMessage, connect } = useWebSocket();
 
     const handleJoinRoom = () => {
         if (!joinForm.name.trim() || !joinForm.roomId.trim()) return;

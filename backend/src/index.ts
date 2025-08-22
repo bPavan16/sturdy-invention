@@ -3,12 +3,36 @@ import { server as WebSocketServer, connection } from "websocket"
 import http from 'http';
 import { UserManager } from "./managers/UserManager";
 import { IncomingMessage, SupportedMessage } from "./messages/incomingMessage";
-import {dotenv} 
+// import {dotenv} 
 
 import { InMemoryStore } from "./store/InMemoryStore";
 
 const server = http.createServer(function (request: any, response: any) {
     console.log((new Date()) + ' Received request for ' + request.url);
+    
+    // Add CORS headers
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    // Handle preflight requests
+    if (request.method === 'OPTIONS') {
+        response.writeHead(200);
+        response.end();
+        return;
+    }
+    
+    // Health check endpoint
+    if (request.url === '/health' || request.url === '/') {
+        response.writeHead(200, { 'Content-Type': 'application/json' });
+        response.end(JSON.stringify({ 
+            status: 'ok', 
+            message: 'WebSocket server is running',
+            timestamp: new Date().toISOString()
+        }));
+        return;
+    }
+    
     response.writeHead(404);
     response.end();
 });
@@ -21,9 +45,7 @@ const userManager = new UserManager();
 const store = new InMemoryStore();
 
 server.listen(PORT, function () {
-
     console.log((new Date()) + ` Server is listening on port ${PORT}`);
-
 });
 
 const wsServer = new WebSocketServer({
@@ -32,6 +54,8 @@ const wsServer = new WebSocketServer({
 });
 
 function originIsAllowed(origin: string) {
+    // Allow all origins in production for WebSocket connections
+    // In production, you might want to restrict this to your frontend domain
     return true;
 }
 

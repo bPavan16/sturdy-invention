@@ -127,7 +127,7 @@ export const ChatSections = ({ messages, onUpvote, currentUserId }: ChatSections
               )}
             </div>
           </div>
-          <ScrollArea className="h-[420px]">
+          <ScrollArea className="h-[470px]">
             {topUpvoteMessages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                 <Crown className="w-8 h-8 mb-3 opacity-40" />
