@@ -9,6 +9,8 @@ interface ChatMessageProps {
 }
 
 export const ChatMessageComponent = ({ message, onUpvote, currentUserId }: ChatMessageProps) => {
+
+    // This is to display the timestamp
     const timeStr = message.timestamp.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit'
@@ -17,7 +19,7 @@ export const ChatMessageComponent = ({ message, onUpvote, currentUserId }: ChatM
     const isOwnMessage = currentUserId && message.userId === currentUserId;
 
     return (
-        <div className="group relative p-2 rounded-lg hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-all duration-200 border border-transparent hover:border-gray-200/50 dark:hover:border-gray-700/50">
+        <div className="group relative px-2 py-2 rounded-lg hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-all duration-200 border border-gray-400/50 dark:border-gray-700/50">
             
             {/* User Info */}
             <div className="flex items-center gap-3 mb-2">

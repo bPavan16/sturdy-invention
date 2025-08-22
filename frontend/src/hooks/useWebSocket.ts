@@ -5,17 +5,18 @@ import { OutgoingSupportedMessage } from '../types';
 interface UseWebSocketReturn {
     isConnected: boolean;
     messages: ChatMessage[];
-    sendMessage: (message: IncomingMessage, currentUser?: { id: string; name: string }) => void;
+    users: Array<{ id: string; name: string }>;
+    sendMessage: (message: IncomingMessage) => void;
     connect: () => void;
     disconnect: () => void;
 }
 
 export const useWebSocket = (url: string): UseWebSocketReturn => {
+    
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
-    const wsRef = useRef<WebSocket | null>(null);
-
-    const connect = () => {
+    const [users, setUsers] = useState<Array<{ id: string; name: string }>>([]);
+    const wsRef = useRef<WebSocket | null>(null);    const connect = () => {
         if (wsRef.current?.readyState === WebSocket.OPEN) return;
 
         const ws = new WebSocket(url, 'echo-protocol');
@@ -47,10 +48,12 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
                         upvotes: data.payload.upvotes,
                         timestamp: new Date(),
                     };
-                    // Check if message already exists (to avoid duplicates from optimistic updates)
+                    
                     setMessages(prev => {
+                        // Check if message already exists
                         const exists = prev.find(msg => msg.id === newMessage.id);
                         if (exists) return prev;
+                        
                         return [...prev, newMessage];
                     });
                 } else if (data.type === OutgoingSupportedMessage.UpdateChat) {
@@ -59,6 +62,8 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
                             ? { ...msg, upvotes: data.payload.upvotes || msg.upvotes }
                             : msg
                     ));
+                } else if (data.type === OutgoingSupportedMessage.UserList) {
+                    setUsers(data.payload.users);
                 }
             } catch (error) {
                 console.error('Error parsing message:', error);
@@ -75,21 +80,8 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
         }
     };
 
-    const sendMessage = (message: IncomingMessage, currentUser?: { id: string; name: string }) => {
+    const sendMessage = (message: IncomingMessage) => {
         if (wsRef.current?.readyState === WebSocket.OPEN) {
-            // Add optimistic update for SendMessage type
-            if (message.type === 'SEND_MESSAGE' && currentUser) {
-                const optimisticMessage: ChatMessage = {
-                    id: `temp_${Date.now()}`, // Temporary ID
-                    userId: currentUser.id,
-                    name: currentUser.name,
-                    message: message.payload.message,
-                    upvotes: 0,
-                    timestamp: new Date(),
-                };
-                setMessages(prev => [...prev, optimisticMessage]);
-            }
-            
             wsRef.current.send(JSON.stringify(message));
         }
     };
@@ -103,6 +95,7 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
     return {
         isConnected,
         messages,
+        users,
         sendMessage,
         connect,
         disconnect,

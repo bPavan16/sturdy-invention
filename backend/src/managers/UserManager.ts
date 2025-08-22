@@ -1,5 +1,5 @@
 import { connection } from "websocket";
-import { OutgoingMessage } from "../messages/outgoingMessages";
+import { OutgoingMessage, SupportedMessage } from "../messages/outgoingMessages";
 
 interface User {
     name: string;
@@ -31,13 +31,18 @@ export class UserManager {
         socket.on('close', (reasonCode, description) => {
             this.removeUser(roomId, userId);
         });
+        
+        // Send updated user list to all users in the room
+        this.sendUserList(roomId);
     }
 
     removeUser(roomId: string, userId: string) {
         console.log("removed user");
-        const users = this.rooms.get(roomId)?.users;
-        if (users) {
-            users.filter(({ id }) => id !== userId);
+        const room = this.rooms.get(roomId);
+        if (room) {
+            room.users = room.users.filter(({ id }) => id !== userId);
+            // Send updated user list to remaining users
+            this.sendUserList(roomId);
         }
     }
 
@@ -64,5 +69,30 @@ export class UserManager {
             console.log("outgoing message " + JSON.stringify(message))
             conn.sendUTF(JSON.stringify(message))
         })
+    }
+
+    sendUserList(roomId: string) {
+        const room = this.rooms.get(roomId);
+        if (!room) {
+            console.error("Room not found");
+            return;
+        }
+
+        const userList = room.users.map(user => ({
+            id: user.id,
+            name: user.name
+        }));
+
+        const message: OutgoingMessage = {
+            type: SupportedMessage.UserList,
+            payload: {
+                roomId,
+                users: userList
+            }
+        };
+
+        room.users.forEach(({ conn }) => {
+            conn.sendUTF(JSON.stringify(message));
+        });
     }
 }

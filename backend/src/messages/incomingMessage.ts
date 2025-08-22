@@ -1,9 +1,9 @@
 import z from "zod";
 
 export enum SupportedMessage {
-    JoinRoom =  "JOIN_ROOM",
+    JoinRoom = "JOIN_ROOM",
     SendMessage = "SEND_MESSAGE",
-    UpvoteMessage = "UPVOTE_MESSAGE",   
+    UpvoteMessage = "UPVOTE_MESSAGE",
 }
 
 export type IncomingMessage = {
@@ -19,7 +19,7 @@ export type IncomingMessage = {
 
 export const InitMessage = z.object({
     name: z.string(),
-    userId: z.string(), 
+    userId: z.string(),
     roomId: z.string(),
 })
 
