@@ -33,6 +33,8 @@ export const UserMessage = z.object({
 
 export type UserMessageType = z.infer<typeof UserMessage>;
 
+// Schema for upvoting a message in a room
+// Ensures that the required fields are present and correctly typed 
 export const UpvoteMessage = z.object({
     userId: z.string(),
     roomId: z.string(),

@@ -1,18 +1,25 @@
 import { connection } from "websocket";
 import { OutgoingMessage, SupportedMessage } from "../messages/outgoingMessages";
 
+
+// This is a UserInterface representing a user in a room
+// Each user has a name, a unique ID, and a connection object for WebSocket communication
 interface User {
     name: string;
     id: string;
     conn: connection;
 }
 
+// This is a RoomInterface representing a chat room
+// Has a list of users currently in the room
 interface Room {
     users: User[]
 }
 
 export class UserManager {
+
     private rooms: Map<string, Room>;
+
     constructor() {
         this.rooms = new Map<string, Room>()
     }
@@ -31,7 +38,7 @@ export class UserManager {
         socket.on('close', (reasonCode, description) => {
             this.removeUser(roomId, userId);
         });
-        
+
         // Send updated user list to all users in the room
         this.sendUserList(roomId);
     }
@@ -72,6 +79,7 @@ export class UserManager {
     }
 
     sendUserList(roomId: string) {
+
         const room = this.rooms.get(roomId);
         if (!room) {
             // console.error("Room not found");
